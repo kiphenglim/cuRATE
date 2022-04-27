@@ -1,4 +1,3 @@
-from multiprocessing.connection import Connection
 import socket
 import pickle
 

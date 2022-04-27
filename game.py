@@ -10,6 +10,7 @@ class Game:
     self.players = {pid: Player(pid)}
     self.ready = False
     self.moves = {}
+    self.gamemaster = 0
 
 
   def addPlayer(self, pid):
@@ -30,11 +31,17 @@ class Game:
     self.moves[pid] = text
     self.players[pid].player_state = PlayerState.WENT
 
+  def is_best_chosen(self):
+    return False
 
   def reset_player_states(self):
     for pid in self.players:
       self.players[pid].player_state = PlayerState.WAITING
+    self.moves = {}
     print('done resetting')
+
+  def increment_gamemaster(self):
+    self.gamemaster = (self.gamemaster+1)%len(self.players)
 
 
   def winner(self):

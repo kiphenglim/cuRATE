@@ -1,9 +1,8 @@
 from enum import Enum
 
 class PlayerState(Enum):
-  GAMEMASTER = 0
-  WAITING = 1
-  WENT = 2
+  WAITING = 0
+  WENT = 1
 
 class Player():
   def __init__(self, id):

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import socket
 from _thread import *
 import pickle
@@ -15,12 +16,8 @@ def threaded_client(conn, p, game):
         break
       else:
         if data == "reset":
-          print('thread_client: reset')
           game.reset_player_states()
         elif data == "get":
-          print('thread_client: get')
-        elif data == "play":
-          print('thread_client: send')
           game.play(p, data)
         conn.sendall(pickle.dumps(game))
     except:
@@ -29,9 +26,11 @@ def threaded_client(conn, p, game):
   print("Lost connection")
   print("Closing Game")
   conn.close()
+  num_players -= 1
 
 
 def main():
+  num_players = 0
   server = ""
   port = 3000
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,25 +41,20 @@ def main():
 
   s.listen(10)
   print("Waiting for a connection, Server Started")
-  player_id = 0
 
   while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
+    num_players += 1
 
-    if player_id == 0:
+    if num_players == 1:
       print("Creating a new game...")
-      game = Game(player_id)
-      game.ready=True
+      game = Game(num_players)
+      game.ready = True
     else:
-      player_id += 1
-      game.addPlayer(player_id)
-
-      # # can start game when more than 3 players
-      # if player_id > 2:
-      #   game.ready = True
-
-    start_new_thread(threaded_client, (conn, player_id, game))
+      game.addPlayer(num_players)
+    print(num_players)
+    start_new_thread(threaded_client, (conn, num_players, game))
 
 if __name__ == '__main__':
   main()
