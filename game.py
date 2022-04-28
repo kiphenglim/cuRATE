@@ -1,6 +1,7 @@
 from enum import Enum
 
 from player import Player, PlayerState
+from art import Exhibition
 
 
 
@@ -11,6 +12,7 @@ class Game:
     self.ready = False
     self.moves = {}
     self.gamemaster = 0
+    self.generate_new_exhibition()
 
 
   def addPlayer(self, pid):
@@ -22,6 +24,14 @@ class Game:
         return False
     return True
 
+  def generate_new_exhibition(self):
+    e = Exhibition(0, 0, 1600, 800)
+    e.generate_exhibition()
+    self.exhibition = e
+
+  def draw_exhibition(self, win):
+    self.exhibition.draw(win)
+
 
   def connected(self):
     return self.ready
@@ -29,6 +39,7 @@ class Game:
 
   def play(self, pid, text):
     self.moves[pid] = text
+    self.players[pid].text = text
     self.players[pid].player_state = PlayerState.WENT
 
   def is_best_chosen(self):

@@ -4,6 +4,7 @@ import pygame_textinput
 
 from art import Exhibition
 from network import Network
+from player import PlayerState
 
 clock = pygame.time.Clock()
 width = 1600
@@ -11,35 +12,28 @@ height = 900
 win = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Client")
 pygame.font.init()
-font = pygame.font.SysFont("arial", 80)
+font = pygame.font.SysFont("arial", 42)
 textinput = pygame_textinput.TextInputVisualizer()
 
 network = Network()
 pid = int(network.getP())
 
 
-def redrawWindow(win, game, exhibition):
-  win.fill((128,128,128))
+def redrawWindow(win, game):
+  win.fill((60,60,60))
 
   if not(game.connected()):
-    font = pygame.font.SysFont("arial", 80)
-    text = font.render("Waiting for more players", 1, (255,0,0), True)
+    font = pygame.font.SysFont("arial", 42)
+    text = font.render("Waiting for more players", 1, (0,200,200), True)
     win.blit(text, (width/2 - text.get_width()/2, height/2 - text.get_height()/2))
   else:
-    exhibition.draw(win)
+    game.draw_exhibition(win)
 
   pygame.display.update()
 
 
-def generate_new_exhibition():
-  e = Exhibition(0, 0, 1600, 900)
-  e.generate_exhibition()
-  return e
-
-
-def run_game(exhibition):
+def run_game():
   run = True
-  exhib = exhibition
 
   while run:
     clock.tick(60)
@@ -51,10 +45,18 @@ def run_game(exhibition):
       break
 
     if game.allSubmitted():
-      game = on_submission(game, network)
-      if is_winner(game):
-        break
-      exhib = new_ex(game)
+      for move in game.moves:
+        text = font.render(game.moves[move],
+          1, (0,200,200))
+        win.blit(text,
+          (width/2 - text.get_width()/2, height/2 - text.get_height()/2 + pid*100))
+        pygame.display.update()
+      clock.tick(60*10)
+      try:
+        game = network.send("reset")
+        return game
+      except:
+        print("Couldn't reset game")
       pygame.display.update()
     else:
       events = pygame.event.get()
@@ -65,31 +67,15 @@ def run_game(exhibition):
             run = False
             break
           if event.key == pygame.K_RETURN:
-            game.players[pid].text = textinput.surface
-            game = network.send("get")
+            # move = str(pid) + " " + textinput.value
+            network.send(textinput.value)
       textinput.update(events)
-      win.blit(textinput.surface, (800, 800))
+      text = textinput.surface
+      win.blit(text,
+        (width/2 - text.get_width()/2, 3*height/4 - text.get_width()/2))
       pygame.display.update()
-      redrawWindow(win, game, exhib)
+      redrawWindow(win, game)
 
-def on_submission(game, network):
-  # while not game.is_best_chosen():
-  #   if pid == game.gamemaster:
-  #     for move in game.moves:
-  #       win.blit(font.render(game.moves[move], 1, (255,0,0)),
-  #         (800,
-  #         800))
-  try:
-    game = network.send("reset")
-    return game
-  except:
-    print("Couldn't reset game")
-
-def new_ex(game):
-  exhib = generate_new_exhibition()
-  redrawWindow(win, game, exhib)
-  textinput.value = ""
-  return exhib
 
 def is_winner(game):
   if game.winner() == -1:
@@ -102,23 +88,25 @@ def is_winner(game):
   win.blit(text, (width/2 - text.get_width()/2, height/2 - text.get_height()/2))
   return True
 
+
 def menu_screen():
   run = True
 
   while run:
     clock.tick(60)
     try:
-      game = network.send("play")
+      game = network.send("get")
     except:
       run = False
       print("Couldn't get game")
+      pygame.quit()
       break
 
     num_clients = len(game.players)
 
-    font = pygame.font.SysFont("arial", 60)
-    win.fill((128,128,128))
-    text = font.render(f"Number of players: {num_clients}", 1, (255,0,0))
+    font = pygame.font.SysFont("arial", 42)
+    win.fill((60,60,60))
+    text = font.render(f"Number of players: {num_clients}", 1, (0,200,200))
     win.blit(text, (100,200))
     pygame.display.update()
 
@@ -137,7 +125,7 @@ def menu_screen():
 
 def main():
   menu_screen()
-  run_game(generate_new_exhibition())
+  run_game()
 
 
 if __name__ == "__main__":

@@ -25,7 +25,7 @@ class Exhibition():
       if new_art not in artwork_names:
         artwork_names.append(new_art)
         self.artworks.append(
-          Art('art/'+new_art, (self.width/3)*len(self.artworks), 100, 500, 500)
+          Art('art/'+new_art, (self.width/3)*len(self.artworks), 25, 400, 400)
         )
     print(f'{len(self.artworks)} artworks in exhibition')
 

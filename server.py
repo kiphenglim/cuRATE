@@ -17,8 +17,11 @@ def threaded_client(conn, p, game):
       else:
         if data == "reset":
           game.reset_player_states()
-        elif data == "get":
-          game.play(p, data)
+          game.generate_new_exhibition()
+        elif data != "get":
+          # idx_space = data.index(" ")
+          # p, move = data[:idx_space], data[idx_space+1:]
+          game.play(1, data)
         conn.sendall(pickle.dumps(game))
     except:
         break
@@ -26,13 +29,12 @@ def threaded_client(conn, p, game):
   print("Lost connection")
   print("Closing Game")
   conn.close()
-  num_players -= 1
 
 
 def main():
   num_players = 0
   server = ""
-  port = 3000
+  port = 8000
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   try:
     s.bind((server, port))
