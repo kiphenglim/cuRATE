@@ -56,4 +56,5 @@ pickled and then transmitted via the network between server and clients.
 
 ## Contributors
 Kip Lim, Harvey Mudd College
+
 Vivian Pou, Harvey Mudd College
