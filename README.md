@@ -8,6 +8,13 @@ ARHI186A Perspectives in Contemporary Art at Pitzer College in Claremont, CA.
 It was born out of the idea that the experience of art is shaped at least in
 part by the audience, and the curator is only there as a guide.
 
+### Wireframes & Demo
+[Wireframe & Demo](https://docs.google.com/presentation/d/1JYIKw08Qmi-51llbBYGNFbLb4nSHqCvT6yqFlkURXBU/edit?usp=sharing)
+
+<video width="320" height="240" controls>
+  <source src="cuRATE demo.mp4" type="video/mp4">
+</video>
+
 ## Running the Game
 
 For the game to work, the server must be running. In the cuRATE directory on
